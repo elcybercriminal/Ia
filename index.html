@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>MyImage AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, #312e81 0, transparent 35%),
+        radial-gradient(circle at bottom right, #7c3aed 0, transparent 30%),
+        #09090f;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+      padding: 40px 0;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .logo span {
+      color: #8b5cf6;
+    }
+
+    header p {
+      color: #aaa;
+      font-size: 16px;
+    }
+
+    .card {
+      background: rgba(20, 20, 30, 0.85);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      backdrop-filter: blur(15px);
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 1px solid #333344;
+      border-radius: 16px;
+      background: #11111a;
+      color: white;
+      padding: 18px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .option {
+      background: #11111a;
+      border: 1px solid #2c2c3a;
+      border-radius: 14px;
+      padding: 15px;
+    }
+
+    select {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #333344;
+      background: #181822;
+      color: white;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 25px;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7c3aed, #a855f7);
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(139,92,246,0.35);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+      transform: none;
+    }
+
+    .result {
+      margin-top: 30px;
+      display: none;
+    }
+
+    .result h2 {
+      margin-bottom: 15px;
+    }
+
+    .image-box {
+      min-height: 350px;
+      border-radius: 18px;
+      background: #11111a;
+      border: 1px dashed #44445a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      color: #777;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .image-box img {
+      width: 100%;
+      display: block;
+      border-radius: 14px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      color: #aaa;
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        font-size: 28px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <header>
+      <div class="logo">My<span>Image</span> AI</div>
+      <p>Crée des images avec l'intelligence artificielle.</p>
+    </header>
+
+    <main class="card">
+
+      <label for="prompt">
+        Décris ton image
+      </label>
+
+      <textarea
+        id="prompt"
+        placeholder="Exemple : une ville futuriste au coucher du soleil, ultra réaliste..."
+      ></textarea>
+
+      <div class="options">
+
+        <div class="option">
+          <label for="model">Modèle</label>
+
+          <select id="model">
+            <option value="default">
+              Modèle principal
+            </option>
+
+            <option value="fast">
+              Rapide
+            </option>
+
+            <option value="quality">
+              Haute qualité
+            </option>
+          </select>
+        </div>
+
+        <div class="option">
+          <label for="size">Format</label>
+
+          <select id="size">
+            <option value="1024x1024">
+              Carré — 1024 × 1024
+            </option>
+
+            <option value="1536x1024">
+              Paysage — 1536 × 1024
+            </option>
+
+            <option value="1024x1536">
+              Portrait — 1024 × 1536
+            </option>
+          </select>
+        </div>
+
+      </div>
+
+      <button id="generateButton">
+        ✨ Générer l'image
+      </button>
+
+      <div class="loading" id="loading">
+        Génération de ton image...
+      </div>
+
+      <section class="result" id="result">
+
+        <h2>Résultat</h2>
+
+        <div class="image-box" id="imageBox">
+          L'image apparaîtra ici.
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer>
+      MyImage AI — Prototype
+    </footer>
+
+  </div>
+
+  <script>
+
+    const button = document.getElementById("generateButton");
+    const promptInput = document.getElementById("prompt");
+    const modelInput = document.getElementById("model");
+    const sizeInput = document.getElementById("size");
+
+    const loading = document.getElementById("loading");
+    const result = document.getElementById("result");
+    const imageBox = document.getElementById("imageBox");
+
+    button.addEventListener("click", async () => {
+
+      const prompt = promptInput.value.trim();
+
+      if (!prompt) {
+        alert("Décris d'abord l'image que tu veux créer.");
+        return;
+      }
+
+      button.disabled = true;
+      loading.style.display = "block";
+      result.style.display = "block";
+
+      imageBox.innerHTML = "Génération en cours...";
+
+      try {
+
+        /*
+         * IMPORTANT :
+         * Cette URL sera celle de TON backend.
+         *
+         * Ne mets jamais une clé API secrète
+         * directement dans ce fichier.
+         */
+
+        const response = await fetch("https://TON-BACKEND.com/generate", {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            prompt: prompt,
+            model: modelInput.value,
+            size: sizeInput.value
+          })
+
+        });
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de la génération.");
+        }
+
+        const data = await response.json();
+
+        /*
+         * Ton backend devra retourner quelque chose
+         * comme :
+         *
+         * {
+         *   "imageUrl": "https://..."
+         * }
+         */
+
+        imageBox.innerHTML = `
+          <img src="${data.imageUrl}" alt="Image générée par IA">
+        `;
+
+      } catch (error) {
+
+        console.error(error);
+
+        imageBox.innerHTML = `
+          <div>
+            <p>⚠️ Le générateur n'est pas encore connecté.</p>
+            <br>
+            <small>
+              Il faut maintenant connecter cette page
+              à ton backend et à ton modèle d'IA.
+            </small>
+          </div>
+        `;
+
+      } finally {
+
+        button.disabled = false;
+        loading.style.display = "none";
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
